@@ -63,13 +63,18 @@ In main.py input the new location to DataFetcher.
 6. **Optional: Translate to your language**:  
    The code is in English, but in ScreenManager the text is in Norwegian.
    Text to be translated:
-   - "Nå" -> "Now"
-   - "i morgen" -> "tomorrow"
-   - "Sist oppdatert" -> "Last update"
+  -  "Nå" -> "Now"
+  -  "i morgen" -> "tomorrow"
+  -  "Sist oppdatert" -> "Last update"
+   
+7. **Optional: Run your own api**:  
+  -  The code use my api to store large images. 
+  -  If you want other images than me, you should run your own api. See flask_api folder and run it on pythonanywhere.com.
 
-5. **Upload the Code to Pico W**:  
-- Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
-- Do not upload the screenshots and flask_api.
+8. **Upload the Code to Pico W**:
+  - Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
+  - Do not upload the screenshots and flask_api directories.
+
 
 ### Usage
 1. **Power On the Pico W**:
