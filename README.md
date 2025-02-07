@@ -34,15 +34,15 @@ The device shows the weather data for Now, +4hours, +8hours and tomorrow at 12:0
     ```
 2. **Set Up Wi-Fi Credentials**:
 Open datafetcher.py and replace the placeholders with your actual Wi-Fi SSID and password:
-```
-_SSID = "WIFI_SSID_PLACEHOLDER"
-_WIFI_TOKEN = "WIFI_PASSWORD_PLACEHOLDER"
-```
+    ```
+    _SSID = "WIFI_SSID_PLACEHOLDER"
+    _WIFI_TOKEN = "WIFI_PASSWORD_PLACEHOLDER"
+    ```
 3. **Change header for MET API**:
 Open datafetcher.py and replace the placeholder with your email. This is required by MET API.
-```
-self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLACEHOLDER@PLACEHOLDER.com'}
-```
+    ```
+    self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLACEHOLDER@PLACEHOLDER.com'}
+    ```
 4. **Add your location**:
    - Default location is "drammen".
    - Go get the latitude, longitude and altitude for the place you want weather data.
@@ -55,9 +55,9 @@ self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLA
      ```
 5. **Input correct location in main.py**:
 In main.py input the new location to DataFetcher.
-```python
-data = DataFetcher('drammen')
-```
+    ```python
+    data = DataFetcher('drammen')
+    ```
 
 6. **Optional: Translate to your language**:
    The code is in English, but in ScreenManager the text is in Norwegian.
