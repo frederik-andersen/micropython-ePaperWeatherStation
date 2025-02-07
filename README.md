@@ -63,6 +63,7 @@ In main.py input the new location to DataFetcher.
    The code is in English, but in ScreenManager the text is in Norwegian.
    Text to be translated:
    - "Nå" -> "Now"
+   - "i morgen" -> "tomorrow"
    - "Sist oppdatert" -> "Last update"
 
 5. **Upload the Code to Pico W**:
