@@ -3,8 +3,7 @@
 This project is a weather station built using MicroPython on a Raspberry Pi Pico W and a Waveshare 5.65-inch ePaper display. It fetches and displays weather data for a specified location.
 
 ## Screenshot
-The device shows the weather data for Now, +4hours, +8hours and tomorrow at 12:00.
-The small images are loaded from flash, the big image is fetched from my personal API. Code for the api will be uploaded at a later time. But feel free to use it as is. The reason the big images are in the api is because there is not enough storage on the flash.
+The device shows the weather data for Now, +4 hours, +8 hours, and tomorrow at 12:00. The small images are loaded from flash, the big image is fetched from my personal API. Code for the API will be uploaded at a later time. But feel free to use it as is. The reason the big images are in the API is because there is not enough storage on the flash.
 <p align="left">
   <img src="https://github.com/frederik-andersen/micropython-ePaperWeatherStation/blob/main/screenshots/IMG_0831.jpeg" width="600">
 </p>
@@ -68,8 +67,8 @@ In main.py input the new location to DataFetcher.
   -  "Sist oppdatert" -> "Last update"
    
 7. **Optional: Run your own api**:  
-  -  The code use my api to store large images. 
-  -  If you want other images than me, you should run your own api. See flask_api folder and run it on pythonanywhere.com.
+  - The code uses my API to store large images.
+  - If you want other images than mine, you should run your own API. See the flask_api folder and run it on pythonanywhere.com.
 
 8. **Upload the Code to Pico W**:
   - Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
