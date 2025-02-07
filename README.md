@@ -29,22 +29,22 @@ The small images are loaded from flash, the big image is fetched from my persona
 - Wi-Fi network
 
 ### Installation
-1. **Clone the Repository**:
+1. **Clone the Repository**:  
    ```sh
    git clone https://github.com/frederik-andersen/micropython-ePaperWeatherStation.git
     ```
-2. **Set Up Wi-Fi Credentials**:
+2. **Set Up Wi-Fi Credentials**:  
 Open datafetcher.py and replace the placeholders with your actual Wi-Fi SSID and password:
     ```
     _SSID = "WIFI_SSID_PLACEHOLDER"
     _WIFI_TOKEN = "WIFI_PASSWORD_PLACEHOLDER"
     ```
-3. **Change header for MET API**:
+3. **Change header for MET API**:  
 Open datafetcher.py and replace the placeholder with your email. This is required by MET API.
     ```
     self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLACEHOLDER@PLACEHOLDER.com'}
     ```
-4. **Add your location**:
+4. **Add your location**:  
    - Default location is "drammen".
    - Go get the latitude, longitude and altitude for the place you want weather data.
    - Add your location to the locations dictionary in DataFetcher.
@@ -54,20 +54,20 @@ Open datafetcher.py and replace the placeholder with your email. This is require
          'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}
      }
      ```
-5. **Input correct location in main.py**:
+5. **Input correct location in main.py**:  
 In main.py input the new location to DataFetcher.
     ```python
     data = DataFetcher('drammen')
     ```
 
-6. **Optional: Translate to your language**:
+6. **Optional: Translate to your language**:  
    The code is in English, but in ScreenManager the text is in Norwegian.
    Text to be translated:
    - "Nå" -> "Now"
    - "i morgen" -> "tomorrow"
    - "Sist oppdatert" -> "Last update"
 
-5. **Upload the Code to Pico W**:
+5. **Upload the Code to Pico W**:  
 - Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
 - Do not upload the screenshots and flask_api.
 
