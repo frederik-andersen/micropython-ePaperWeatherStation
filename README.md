@@ -31,7 +31,7 @@ The device shows the weather data for Now, +4hours, +8hours and tomorrow at 12:0
 1. **Clone the Repository**:
    ```sh
    git clone https://github.com/frederik-andersen/micropython-ePaperWeatherStation.git
-```
+    ```
 2. **Set Up Wi-Fi Credentials**:
 Open datafetcher.py and replace the placeholders with your actual Wi-Fi SSID and password:
 ```
