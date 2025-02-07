@@ -68,7 +68,8 @@ In main.py input the new location to DataFetcher.
    - "Sist oppdatert" -> "Last update"
 
 5. **Upload the Code to Pico W**:
-Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
+- Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
+- Do not upload the screenshots and flask_api.
 
 ### Usage
 1. **Power On the Pico W**:
@@ -79,7 +80,7 @@ Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 
 
 ## TODO:
 - Handling wintertime and summertime. Wintertime is now hardcoded in TimeManager.
-- Upload my flask api used to import bigger binary images. 
+
 
 ## Modifications and new libraries:
 - The ePaper [driver](https://github.com/frederik-andersen/micropython-ePaper-5in65-border-color "New epaper driver") is changed so border color can be changed, and the buffer is allocated outside the class. This is to prevent memory leaks that happend with the original driver.
@@ -98,3 +99,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgements
 - [**Peter Hinch**](https://github.com/peterhinch "PeterHinch"): For the writer class used for text rendering.
 - [**Waveshare**](https://github.com/waveshareteam/e-Paper "Waveshare"): For the ePaper display and driver.
+- [**MET Weather API**](https://api.met.no/weatherapi/locationforecast/2.0/documentation "MET Weather API"): The weather api used for all data.
+- [**MET Weather API icons**](https://github.com/metno/weathericons "MET Weather API icons"): For the weather images.
+- [**Pythonanywhere**](https://www.pythonanywhere.com/ "Pythonanywhere"): For free python flask hosting.
