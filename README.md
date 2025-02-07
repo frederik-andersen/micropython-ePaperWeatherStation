@@ -101,8 +101,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgements
-- [**Peter Hinch**](https://github.com/peterhinch "PeterHinch"): For the writer class used for text rendering.
+- [**Peter Hinch**](https://github.com/peterhinch "PeterHinch"): For the writer class used for text rendering and font_to_py for fonts.
 - [**Waveshare**](https://github.com/waveshareteam/e-Paper "Waveshare"): For the ePaper display and driver.
+- [**Christopher Arndt**](https://github.com/SpotlightKid/mrequests "Christopher Arndt"): For mrequests. A better requests library.
 - [**MET Weather API**](https://api.met.no/weatherapi/locationforecast/2.0/documentation "MET Weather API"): The weather api used for all data.
 - [**MET Weather API icons**](https://github.com/metno/weathericons "MET Weather API icons"): For the weather images.
 - [**Pythonanywhere**](https://www.pythonanywhere.com/ "Pythonanywhere"): For free python flask hosting.
