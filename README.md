@@ -4,6 +4,7 @@ This project is a weather station built using MicroPython on a Raspberry Pi Pico
 
 ## Screenshot
 The device shows the weather data for Now, +4hours, +8hours and tomorrow at 12:00.
+The small images are loaded from flash, the big image is fetched from my personal API. Code for the api will be uploaded at a later time. But feel free to use it as is. The reason the big images are in the api is because there is not enough storage on the flash.
 <p align="left">
   <img src="https://github.com/frederik-andersen/micropython-ePaperWeatherStation/blob/main/screenshots/IMG_0831.jpeg" width="600">
 </p>
@@ -78,6 +79,7 @@ Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 
 
 ## TODO:
 - Handling wintertime and summertime. Wintertime is now hardcoded in TimeManager.
+- Upload my flask api used to import bigger binary images. 
 
 ## Modifications and new libraries:
 - The ePaper [driver](https://github.com/frederik-andersen/micropython-ePaper-5in65-border-color "New epaper driver") is changed so border color can be changed, and the buffer is allocated outside the class. This is to prevent memory leaks that happend with the original driver.
