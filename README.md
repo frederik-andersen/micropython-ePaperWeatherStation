@@ -11,7 +11,7 @@ The device shows the weather data for Now, +4 hours, +8 hours, and tomorrow at 1
 I have made a wallmount for the weatherstation, that can be 3D-printed.  
 The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworld.com/en/models/1773343-wallmount-for-waveshare-pico-e-paper-5-65#profileId-1888240)  
 <p align="left">
-  <img src="https://github.com/frederik-andersen/micropython-ePaperWeatherStation/blob/main/screenshots/IMG_2365.jpeg" width="600">
+  <img src="https://github.com/frederik-andersen/micropython-ePaperWeatherStation/blob/main/screenshots/IMG_2365.JPG" width="600">
 </p>
 
 ## Features
