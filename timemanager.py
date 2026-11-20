@@ -7,6 +7,7 @@ import utime
 import machine
 import random
 from ntptime import settime
+from errorhandler import ErrorHandler
 
 class TimeManager():
     
@@ -22,7 +23,10 @@ class TimeManager():
         self._summertime = 2 # Hours ahead of UTC/GMT
         self._wintertime = 1 # Hours ahead of UTC/GMT
         self._update_times = {'screen_update': None, 'screen_cleaned': False} # Dict for handeling update times.
-        self._set_time()
+        try:
+            self._set_time()
+        except Exception:
+            pass # Continue with the RTC time; the error is already printed.
         self._random_delay = random.randint(0, 60) # Used for adding random delay to expire time.
         
         self._datafetcher = datafetcher

@@ -1,7 +1,8 @@
 # Simple API for fetching binary images to pico ePaper weather station.
 # By Frederik Andersen
 
-from flask import Flask, redirect, request, send_file
+import re
+from flask import Flask, abort, redirect, request, send_from_directory
 
 app = Flask(__name__)
 
@@ -11,6 +12,8 @@ def human_interaction():
 
 @app.route('/api/')
 def get_file():
-    requested_icon = request.args.get('requested-icon')
+    requested_icon = request.args.get('requested-icon', '')
+    if not re.fullmatch(r'[a-z_]+', requested_icon): # Only icon names, no paths.
+        abort(404)
 
-    return send_file(f'weather_binaries/{requested_icon}.bin')
+    return send_from_directory('weather_binaries', f'{requested_icon}.bin')

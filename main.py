@@ -23,7 +23,11 @@ if __name__=='__main__':
         time_for_update = time_manager.is_it_time()
         if time_for_update[0] == True: # Time to fetch new weather data?
             print(f'Updating the weather data. Datetime: {time_manager.rtc.datetime()}')
-            data.fetch_new_weather_data() # Update the data
+            try:
+                data.fetch_new_weather_data() # Update the data
+            except Exception as e:
+                print(f'Fetch failed: {e}')
+                utime.sleep(300) # Wait 5 minutes before trying again.
             
         else:
             if time_for_update[2] == True: # Time to clear the screen? Should be at night

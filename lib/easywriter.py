@@ -57,7 +57,7 @@ class EasyWriter():
         workspace_width = width_end_pos - width_start_pos # The width of the area the text should be centered.
         width_pos = width_start_pos + ((workspace_width - length) // 2) # Get the position for the text. 
 
-        self.add_text(line, height_pos, width_pos)
+        self.add_text(line, width_pos, height_pos)
 
     def add_text_horizontal_center(self, line, height_pos, width_start_pos=0, width_end_pos=EPD_WIDTH):
         """

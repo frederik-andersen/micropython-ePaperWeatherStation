@@ -49,7 +49,8 @@ class DataFetcher():
                     ErrorHandler.retry_timer() # Flashes led and waits 5 minutes before continuing this loop.
                     try:
                         self._enable_wifi(wlan) # Connect to wifi
-                    except:
+                        break # Connected, leave the retry loop.
+                    except Exception:
                         continue
             
     def _enable_wifi(self, wlan):
@@ -175,6 +176,7 @@ class DataFetcher():
         
         if weather_data.status_code != 200:  # 200 = successful connection to MET API, anything else is an error.
             exception_string = f"MET Weather API connection error: {weather_data.status_code}"
+            weather_data.close()
             ErrorHandler(exception_string)
             raise Exception(exception_string)
         else:
@@ -209,7 +211,7 @@ class DataFetcher():
         if icon_recieved.status_code != 200:  # 200 = successful connection to frederikapi, anything else is an error.
                 exception_string = f"Frederik API connection error: {icon_recieved.status_code}, Requested icon: {icon_requested}"
                 ErrorHandler(exception_string)
-                print(icon_recieved.headers)
+                icon_recieved.close()
                 raise Exception(exception_string)
 
         else:
@@ -254,6 +256,8 @@ class DataFetcher():
             requested_date = (next_date[1], next_date[2]) # (month, day)
         
         weather_data = self._read_file(self.location) # Read the weather data.
+        temperature = None
+        weather_icon = None
         
         for data in weather_data['properties']['timeseries']: # Loop trough the data and find correct time.
             time_and_date = data['time'].split("T")
@@ -278,6 +282,8 @@ class DataFetcher():
                     weather_icon = self._get_weather_icon(data['data']['next_1_hours']['summary']['symbol_code']) # Get the 200x200 weather icon from api.
                     break
                     
+        if temperature is None:
+            raise ValueError("No weather data found for the requested time.")
         return temperature, weather_icon
     
     def get_expiretime_weatherdata(self):
@@ -299,4 +305,4 @@ class DataFetcher():
             print(e)
             return 'Tue, 14 Jan 2025 12:58:38 GMT'
 
-    
+    
