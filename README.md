@@ -20,6 +20,9 @@ The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworl
 - **Wi-Fi Connectivity**: Connects to Wi-Fi to fetch the latest weather information.
 - **Real-Time Updates**: Updates weather data and display in real-time.
 - **Customizable Location**: Easily set your location to get accurate weather data.
+- **Private Settings**: Wi-Fi password, email and coordinates are stored in `user_input.py`, which is never committed to git.
+- **Summertime**: Norwegian summertime is calculated automatically.
+- **Self-Recovery**: The Pico restarts itself after a fatal error, and the clock is synced every 24 hours.
 
 ## Components
 - **MicroPython**: The project is written in MicroPython.
@@ -39,23 +42,33 @@ The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworl
    git clone https://github.com/frederik-andersen/micropython-ePaperWeatherStation.git
     ```
 2. **Set up your own settings**:  
-Copy user_input_example.py to user_input.py and fill in Wi-Fi name, password, email (required by MET API) and location. user_input.py is in .gitignore, so your password is never committed. Upload user_input.py to the Pico.
-3. **Add your location**:  
-   - To keep your home location private, set LATITUDE, LONGITUDE and ALTITUDE in user_input.py. Then skip the rest of this step.
-   - Default location is "drammen".
-   - Go get the latitude, longitude and altitude for the place you want weather data.
-   - Add your location to the locations dictionary in DataFetcher.
+   All personal settings live in `user_input.py`. This file is in `.gitignore`, so your password and coordinates are never committed.
+   - Copy `user_input_example.py` to `user_input.py`.
+   - Fill in all values. The example values for coordinates are only an example (Drammen).
+     ```python
+     SSID = "your wifi name"
+     WIFI_PASSWORD = "your wifi password"
+     EMAIL = "you@example.com"   # Required by the MET API terms of service.
+     LOCATION = "drammen"        # Lower case. Used as file name for the saved weather data.
+     LATITUDE = 59.7396
+     LONGITUDE = 10.2046
+     ALTITUDE = 3                # Meters above sea level. The MET API uses it to adjust the temperature.
+     ```
+   - Never upload `user_input.py` to GitHub. Do not overwrite it when you update the code on the Pico.
+
+3. **Location**:  
+   - If you set `LATITUDE`, `LONGITUDE` and `ALTITUDE` in `user_input.py`, that is all you need.
+   - Without coordinates, `LOCATION` must exist in the `locations` dictionary in `datafetcher.py` (`drammen` and `oslo` exist by default).
      ```python
      self.locations = {
          'drammen': {'latitude': 59.7396, 'longitude': 10.2046, 'altitude': 3},
          'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}
      }
      ```
-4. **Set the location in user_input.py**:  
-Set LOCATION to the name you added in step 3.
-    ```python
-    LOCATION = "drammen"
-    ```
+
+4. **Time zone**:  
+   Norwegian time is built in: UTC+1 in winter and UTC+2 in summer (last Sunday in March to last Sunday in October, 01:00 UTC).
+   For other countries, change `_get_time_difference` in `timemanager.py`.
 
 5. **Optional: Translate to your language**:  
    The code is in English, but in ScreenManager the text is in Norwegian.
@@ -70,18 +83,35 @@ Set LOCATION to the name you added in step 3.
 
 7. **Upload the Code to Pico W**:
   - Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
+  - Upload `user_input.py` too. It must be in the top folder on the Pico, not in `lib`.
   - Do not upload the screenshots and flask_api directories.
+  - If you update the code later, keep your own `user_input.py`. Make a backup of the Pico first.
 
 
 ### Usage
 1. **Power On the Pico W**:
-   - Connect your Raspberry Pi Pico W to a power source.
+   - Connect your Raspberry Pi Pico W to a power source. `main.py` starts by itself.
 
 2. **View Weather Data**:
-   - The ePaper display will show the current weather data for your specified location. The data is updated every hour, and the screen is cleared once every 24 hours at 02:00 UTC to prevent ghosting.
+   - The ePaper display shows the weather for your location: now, +4 hours, +8 hours and tomorrow at 12:00 UTC. The hour labels use local time.
+   - The screen is redrawn every whole hour. The weather data is fetched again when the MET API says it has expired, plus a random delay of up to 60 minutes.
+   - The screen is cleared once every 24 hours at 02:00 UTC to prevent ghosting.
+   - The clock is synced with NTP at start and then every 24 hours.
+
+### When something fails
+The Pico is normally not connected to a computer, so errors are handled automatically:
+- **No answer from the MET API**: The Pico waits 5 minutes and tries again. The screen keeps the last weather.
+- **Wi-Fi is down**: The Pico retries every 5 minutes. The onboard LED flashes while it waits.
+- **Icon API is down**: The screen is drawn without the big icon for tomorrow.
+- **Any other fatal error** (for example NTP fails 5 times, or a missing icon): The screen is put to sleep, and the Pico waits 5 minutes and restarts itself with `machine.reset()`.
+- **Missing `user_input.py`**: The program stops with the message `Missing user_input.py`. This error happens at import, so there is no automatic restart.
+- Pressing Stop in Thonny stops the program without a restart.
+
+If the screen shows old data and the LED is not flashing, connect the Pico to a computer and run `main.py` in Thonny to read the error message.
 
 ## TODO:
-- Handling wintertime and summertime. Wintertime is now hardcoded in TimeManager.
+- Summertime follows Norwegian rules only.
+- Not tested for long periods of Wi-Fi loss.
 
 
 ## Modifications and new libraries:
