@@ -30,7 +30,7 @@ class DataFetcher():
         Parameters:
         location (str): The name of the location to fetch data for.
         """
-        self.USER_AGENT_HEADER = {'User-Agent': f'pico-ePaper-weather-station v.1.0.0 {user_input.EMAIL}'} # The email comes from user_input.py.
+        self.USER_AGENT_HEADER = {'User-Agent': f'pico-ePaper-weather-station v.2.0.0 {user_input.EMAIL}'} # The email comes from user_input.py.
         self.location = location
         self._expire_time = None # Cached expire time, so the file is not read every loop.
         self.locations = {'drammen': {'latitude': 59.7396, 'longitude': 10.2046, 'altitude': 3},

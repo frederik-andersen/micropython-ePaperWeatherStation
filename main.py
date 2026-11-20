@@ -1,5 +1,5 @@
 # ePaperWeatherStation by Frederik Andersen
-# v.1.0.0
+# v.2.0.0
 # Date 2025-02-07
 # This project fetches weather data for a specified location using the MET Weather API
 # and displays it on a Waveshare 5.65-inch ePaper display. The weather data is updated
