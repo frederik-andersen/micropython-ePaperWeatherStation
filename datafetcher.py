@@ -53,8 +53,11 @@ class DataFetcher():
             except Exception as e:
                 ErrorHandler(e)
                 
+                attempts = 0
                 while True:
-                    ErrorHandler.retry_timer() # Flashes led and waits 5 minutes before continuing this loop.
+                    attempts += 1
+                    # Flashes led while waiting. First 5 retries after 30 seconds, then every 5 minutes.
+                    ErrorHandler.retry_timer(30 if attempts <= 5 else 300)
                     try:
                         self._enable_wifi(wlan) # Connect to wifi
                         break # Connected, leave the retry loop.
@@ -88,7 +91,12 @@ class DataFetcher():
 
         # Check if connection is successful
         if wlan.status() != 3:
-            raise RuntimeError('Failed to establish a network connection.')
+            # Status: -1 connection failed, -2 no network found, -3 wrong password.
+            status = wlan.status()
+            wlan.disconnect()
+            wlan.active(False) # Reset the Wi-Fi chip, so the next try starts clean.
+            utime.sleep(2)
+            raise RuntimeError(f'Failed to establish a network connection. Status: {status}')
         else:
             print('Connection successful!')
             network_info = wlan.ifconfig()
