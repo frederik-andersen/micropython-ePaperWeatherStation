@@ -22,6 +22,7 @@ def run():
     screen_manager = ScreenManager(data, time_manager)
     
     while True:
+        time_manager.sync_time_if_needed() # Once a day, keeps the clock correct.
         time_for_update = time_manager.is_it_time()
         if time_for_update[0] == True: # Time to fetch new weather data?
             print(f'Updating the weather data. Datetime: {time_manager.rtc.datetime()}')

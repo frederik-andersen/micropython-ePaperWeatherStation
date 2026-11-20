@@ -32,6 +32,7 @@ class DataFetcher():
         """
         self.USER_AGENT_HEADER = {'User-Agent': f'pico-ePaper-weather-station v.1.0.0 {user_input.EMAIL}'} # The email comes from user_input.py.
         self.location = location
+        self._expire_time = None # Cached expire time, so the file is not read every loop.
         self.locations = {'drammen': {'latitude': 59.7396, 'longitude': 10.2046, 'altitude': 3},
                           'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}
                           }
@@ -193,6 +194,7 @@ class DataFetcher():
             #self._data_expire_time = weather_data.headers['Expires']
 
             weather_data.close()
+            self._expire_time = None # Read the new expire time from file next time.
             gc.collect()
             
     def _get_weather_icon(self, icon_requested):
@@ -252,7 +254,8 @@ class DataFetcher():
                 requested_hour -= 24
             
         else: # If wanted current day + x days and spesific time.
-            current_time_tuple = current_time[:7] + (0,) # Ensure the tuple has the correct length
+            # RTC order is (year, month, day, weekday, hour, minute, second, subsecond). mktime needs (year, month, day, hour, minute, second, weekday, yearday).
+            current_time_tuple = (current_time[0], current_time[1], current_time[2], current_time[4], current_time[5], current_time[6], 0, 0)
             current_time_seconds = utime.mktime(current_time_tuple) # Convert to seconds since epoch
             next_time_seconds = current_time_seconds + (day_delta * 86400) # Add one day (86400 seconds)
             next_datetime = utime.localtime(next_time_seconds) # Convert back to datetime
@@ -286,7 +289,11 @@ class DataFetcher():
                 
                 if requested_date[0] == month and requested_date[1] == day and requested_hour == int(time[0]): # If month, day and hour match
                     temperature = data['data']['instant']['details']['air_temperature'] # Get the current temperature.
-                    weather_icon = self._get_weather_icon(data['data']['next_1_hours']['summary']['symbol_code']) # Get the 200x200 weather icon from api.
+                    try:
+                        weather_icon = self._get_weather_icon(data['data']['next_1_hours']['summary']['symbol_code']) # Get the 200x200 weather icon from api.
+                    except Exception as e: # The screen is drawn without the icon if the api is down.
+                        print(f"Could not get weather icon: {e}")
+                        weather_icon = None
                     break
                     
         if temperature is None:
@@ -301,11 +308,15 @@ class DataFetcher():
         str: The expiration time as a string.
         """
 
+        if self._expire_time is not None:
+            return self._expire_time
+        
         try:
             headers_list = self._read_file(f"{self.location}_headers", bypass_error=True) # Bypass error drawing to screen if the file doesnt exist.
             headers_dict = dict(header.split(": ", 1) for header in headers_list)
             
             expire_time = headers_dict['Expires']
+            self._expire_time = expire_time
             return expire_time
         
         except Exception as e: # The file is not made yet, use fictional http date and time.

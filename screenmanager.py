@@ -120,7 +120,8 @@ class ScreenManager():
         ew.add_text_vertical_center(f"{plus_8h_temp}°", width_pos=200, height_start_pos=277, height_end_pos=374)
         
         # Tomorrow at 12:00
-        ew.add_image_horizontal_center(image=tomorrow_12h_icon, img_width=200, img_height=200, height_pos=50, width_start_pos=300, width_end_pos=600)
+        if tomorrow_12h_icon is not None: # None if the icon api was unavailable.
+            ew.add_image_horizontal_center(image=tomorrow_12h_icon, img_width=200, img_height=200, height_pos=50, width_start_pos=300, width_end_pos=600)
         ew.add_text_horizontal_center(f"{tomorrow_12h_temp}°", height_pos=260, width_start_pos=300, width_end_pos=600)
         ew.add_text_horizontal_center("i morgen", height_pos=300, width_start_pos=300, width_end_pos=600)
 

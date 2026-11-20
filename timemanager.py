@@ -22,6 +22,7 @@ class TimeManager():
         """
         self._summertime = 2 # Hours ahead of UTC/GMT
         self._wintertime = 1 # Hours ahead of UTC/GMT
+        self._last_sync = None # Time (utime.time) of the last successful NTP sync.
         self._update_times = {'screen_update': None, 'screen_cleaned': False} # Dict for handeling update times.
         for attempt in range(5): # Never continue with a wrong clock. After 5 failed tries the error stops the program.
             try:
@@ -45,6 +46,7 @@ class TimeManager():
         """
         try:
             settime()
+            self._last_sync = utime.time()
         except Exception as e:
             exception_string = f"Could not set time: {e}"
             ErrorHandler(exception_string)
@@ -58,8 +60,34 @@ class TimeManager():
         Returns:
         int: Hours ahead or behind UTC/GMT.
         """
-        # Not made yet, todo.
+        now = self.rtc.datetime() # UTC
+        year = now[0]
+        # Norwegian summertime: from the last Sunday in March 01:00 UTC to the last Sunday in October 01:00 UTC.
+        starts = (3, self._last_sunday(year, 3), 1)
+        ends = (10, self._last_sunday(year, 10), 1)
+        if starts <= (now[1], now[2], now[4]) < ends:
+            return self._summertime
         return self._wintertime
+    
+    def _last_sunday(self, year, month):
+        """
+        Returns the day of month for the last Sunday. Only for months with 31 days (March and October).
+        """
+        weekday = utime.localtime(utime.mktime((year, month, 31, 0, 0, 0, 0, 0)))[6] # Monday is 0.
+        return 31 - ((weekday + 1) % 7)
+    
+    def sync_time_if_needed(self):
+        """
+        Sets the RTC from NTP about once a day, since the RTC drifts.
+        Failure is not fatal. It is tried again after one hour.
+        """
+        if self._last_sync is None or utime.time() - self._last_sync < 86400:
+            return
+        try:
+            self._datafetcher._is_wifi_enabled() # Ensure that wifi is connected.
+            self._set_time()
+        except Exception:
+            self._last_sync = utime.time() - 86400 + 3600 # Try again in one hour.
     
     def _is_weatherdata_expired(self):     
         """
@@ -128,19 +156,14 @@ class TimeManager():
         
         time_difference = self._get_time_difference()
             
-        rtc_date = self.rtc.datetime()
-        hour = rtc_date[4] + time_difference
-        minute = rtc_date[5]
+        rtc_date = self.rtc.datetime() # UTC
+        utc_seconds = utime.mktime((rtc_date[0], rtc_date[1], rtc_date[2], rtc_date[4], rtc_date[5], rtc_date[6], 0, 0))
+        local = utime.localtime(utc_seconds + time_difference * 3600) # Handles day, month and year changes. Weekday: Monday is 0.
         
-        if len(str(hour)) < 2: # If hour is less than 2 numbers, add a 0 in front.
-            hour = f"0{hour}"
-        elif hour == 24: # Show 00 instead of 24
-            hour = "00"
-        
-        if len(str(minute)) < 2: # If minute is less than 2 numbers, add a 0 in front.
-            minute = f"0{minute}"
+        hour = f"{local[3]:02d}" # Always two digits.
+        minute = f"{local[4]:02d}"
             
-        datetime = [day_converter[rtc_date[3]], rtc_date[2], month_converter[rtc_date[1]], rtc_date[0], hour, minute] # Weekday, day, month, year, hour, minute
+        datetime = [day_converter[local[6]], local[2], month_converter[local[1]], local[0], hour, minute] # Weekday, day, month, year, hour, minute
         return datetime
     
     def get_time_with_delta(self, time_delta):
