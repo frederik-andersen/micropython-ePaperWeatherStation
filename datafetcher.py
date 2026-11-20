@@ -13,10 +13,15 @@ import lib.mrequests as requests
 from machine import RTC
 from errorhandler import ErrorHandler
 
+try:
+    import user_input # Your own settings: Wi-Fi, email and location. See user_input_example.py.
+except ImportError:
+    raise ImportError("Missing user_input.py. Copy user_input_example.py to user_input.py and fill in your values.")
+
 class DataFetcher():
     
-    _SSID = "WIFI_SSID_PLACEHOLDER"
-    _WIFI_TOKEN = "WIFI_PASSWORD_PLACEHOLDER"
+    _SSID = user_input.SSID
+    _WIFI_TOKEN = user_input.WIFI_PASSWORD
     
     def __init__(self, location):
         """
@@ -25,7 +30,7 @@ class DataFetcher():
         Parameters:
         location (str): The name of the location to fetch data for.
         """
-        self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLACEHOLDER@PLACEHOLDER.com'} # This header must be changed to your email.
+        self.USER_AGENT_HEADER = {'User-Agent': f'pico-ePaper-weather-station v.1.0.0 {user_input.EMAIL}'} # The email comes from user_input.py.
         self.location = location
         self.locations = {'drammen': {'latitude': 59.7396, 'longitude': 10.2046, 'altitude': 3},
                           'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}

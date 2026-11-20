@@ -10,12 +10,13 @@ import utime
 import gc
 from datafetcher import DataFetcher
 from timemanager import TimeManager
+import user_input
 from screenmanager import ScreenManager                                                                    
 
 
 if __name__=='__main__':
-    # Write in your location. The location must be defined in datafetcher locations dictionary with latitude, longitude and altitude
-    data = DataFetcher('drammen')  
+    # The location is set in user_input.py. It must be defined in datafetcher locations dictionary with latitude, longitude and altitude
+    data = DataFetcher(user_input.LOCATION)  
     time_manager = TimeManager(data)
     screen_manager = ScreenManager(data, time_manager)
     

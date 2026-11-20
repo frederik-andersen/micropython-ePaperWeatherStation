@@ -38,18 +38,9 @@ The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworl
    ```sh
    git clone https://github.com/frederik-andersen/micropython-ePaperWeatherStation.git
     ```
-2. **Set Up Wi-Fi Credentials**:  
-Open datafetcher.py and replace the placeholders with your actual Wi-Fi SSID and password:
-    ```
-    _SSID = "WIFI_SSID_PLACEHOLDER"
-    _WIFI_TOKEN = "WIFI_PASSWORD_PLACEHOLDER"
-    ```
-3. **Change header for MET API**:  
-Open datafetcher.py and replace the placeholder with your email. This is required by MET API.
-    ```
-    self.USER_AGENT_HEADER = {'User-Agent': 'pico-ePaper-weather-station v.1.0.0 PLACEHOLDER@PLACEHOLDER.com'}
-    ```
-4. **Add your location**:  
+2. **Set up your own settings**:  
+Copy user_input_example.py to user_input.py and fill in Wi-Fi name, password, email (required by MET API) and location. user_input.py is in .gitignore, so your password is never committed. Upload user_input.py to the Pico.
+3. **Add your location**:  
    - Default location is "drammen".
    - Go get the latitude, longitude and altitude for the place you want weather data.
    - Add your location to the locations dictionary in DataFetcher.
@@ -59,24 +50,24 @@ Open datafetcher.py and replace the placeholder with your email. This is require
          'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}
      }
      ```
-5. **Input correct location in main.py**:  
-In main.py input the new location to DataFetcher.
+4. **Set the location in user_input.py**:  
+Set LOCATION to the name you added in step 3.
     ```python
-    data = DataFetcher('drammen')
+    LOCATION = "drammen"
     ```
 
-6. **Optional: Translate to your language**:  
+5. **Optional: Translate to your language**:  
    The code is in English, but in ScreenManager the text is in Norwegian.
    Text to be translated:
   -  "Nå" -> "Now"
   -  "i morgen" -> "tomorrow"
   -  "Sist oppdatert" -> "Last update"
    
-7. **Optional: Run your own api**:  
+6. **Optional: Run your own api**:  
   - The code uses my API to store large images.
   - If you want other images than mine, you should run your own API. See the flask_api folder and run it on pythonanywhere.com.
 
-8. **Upload the Code to Pico W**:
+7. **Upload the Code to Pico W**:
   - Use a tool like Thonny or rshell to upload the code to your Raspberry Pi Pico 2 W.
   - Do not upload the screenshots and flask_api directories.
 
