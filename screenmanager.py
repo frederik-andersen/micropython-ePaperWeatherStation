@@ -47,14 +47,16 @@ class ScreenManager():
         then refreshes and puts the screen to sleep to prevent damage.
         """
         ew = self._init_screen()
-        ew.device.fill(ew.device.White) # White background.
-        
-        self._draw_weather_data(ew)
-        self._draw_date(ew)
-        self._draw_lines(ew)
-        
-        ew.refresh()
-        ew.sleep()  # ALWAYS run this after writing to the screen, may cause physical damage to screen if not.
+        try:
+            ew.device.fill(ew.device.White) # White background.
+            
+            self._draw_weather_data(ew)
+            self._draw_date(ew)
+            self._draw_lines(ew)
+            
+            ew.refresh()
+        finally:
+            ew.sleep()  # ALWAYS run this after writing to the screen, even after an error. May cause physical damage to screen if not.
         
         # Next draw should be in 1 hour. Set that the screen just have been updated.
         self.time_manager.set_screen_updated()

@@ -23,10 +23,14 @@ class TimeManager():
         self._summertime = 2 # Hours ahead of UTC/GMT
         self._wintertime = 1 # Hours ahead of UTC/GMT
         self._update_times = {'screen_update': None, 'screen_cleaned': False} # Dict for handeling update times.
-        try:
-            self._set_time()
-        except Exception:
-            pass # Continue with the RTC time; the error is already printed.
+        for attempt in range(5): # Never continue with a wrong clock. After 5 failed tries the error stops the program.
+            try:
+                self._set_time()
+                break
+            except Exception:
+                if attempt == 4:
+                    raise
+                utime.sleep(5)
         self._random_delay = random.randint(0, 60) # Used for adding random delay to expire time.
         
         self._datafetcher = datafetcher

@@ -8,13 +8,14 @@
 
 import utime
 import gc
+import machine
 from datafetcher import DataFetcher
 from timemanager import TimeManager
 import user_input
 from screenmanager import ScreenManager                                                                    
 
 
-if __name__=='__main__':
+def run():
     # The location is set in user_input.py. It must be defined in datafetcher locations dictionary with latitude, longitude and altitude
     data = DataFetcher(user_input.LOCATION)  
     time_manager = TimeManager(data)
@@ -42,4 +43,12 @@ if __name__=='__main__':
 
         gc.collect() # Free up memory.
         utime.sleep(10)
-    
+
+
+if __name__=='__main__':
+    try:
+        run()
+    except Exception as e: # Ctrl+C in Thonny is not an Exception, so it still stops the program.
+        print(f'Fatal error: {e}')
+        utime.sleep(300) # Wait 5 minutes so the screen is not redrawn too often.
+        machine.reset() # Full restart. main.py starts again by itself.
