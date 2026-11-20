@@ -60,14 +60,46 @@ class TimeManager():
         Returns:
         int: Hours ahead or behind UTC/GMT.
         """
-        now = self.rtc.datetime() # UTC
-        year = now[0]
+        return self._offset_at(self._utc_seconds_now())
+    
+    def _utc_seconds_now(self):
+        """
+        Returns the current UTC time as seconds (same epoch as utime.mktime and utime.localtime).
+        """
+        now = self.rtc.datetime() # (year, month, day, weekday, hour, minute, second, subsecond)
+        return utime.mktime((now[0], now[1], now[2], now[4], now[5], now[6], 0, 0))
+    
+    def _offset_at(self, utc_seconds):
+        """
+        Returns hours ahead of UTC at the given UTC time.
+        """
+        t = utime.localtime(utc_seconds) # Used as plain UTC calendar conversion.
         # Norwegian summertime: from the last Sunday in March 01:00 UTC to the last Sunday in October 01:00 UTC.
-        starts = (3, self._last_sunday(year, 3), 1)
-        ends = (10, self._last_sunday(year, 10), 1)
-        if starts <= (now[1], now[2], now[4]) < ends:
+        starts = (3, self._last_sunday(t[0], 3), 1)
+        ends = (10, self._last_sunday(t[0], 10), 1)
+        if starts <= (t[1], t[2], t[3]) < ends:
             return self._summertime
         return self._wintertime
+    
+    def get_utc_for_local(self, day_delta, local_hour):
+        """
+        Finds the UTC date and hour for a given local hour, day_delta days from today (local date).
+        The weather data from MET is in UTC.
+
+        Parameters:
+        day_delta (int): Days from today, local date. 1 is tomorrow.
+        local_hour (int): The hour in local time, for example 12.
+
+        Returns:
+        tuple: (month, day, hour) in UTC.
+        """
+        utc_now = self._utc_seconds_now()
+        local_now = utime.localtime(utc_now + self._offset_at(utc_now) * 3600) # Local date today.
+        local_midnight = utime.mktime((local_now[0], local_now[1], local_now[2], 0, 0, 0, 0, 0))
+        target_local = local_midnight + day_delta * 86400 + local_hour * 3600 # Local wall clock, as seconds.
+        offset = self._offset_at(target_local - self._wintertime * 3600) # Offset at the target time.
+        t = utime.localtime(target_local - offset * 3600)
+        return (t[1], t[2], t[3])
     
     def _last_sunday(self, year, month):
         """

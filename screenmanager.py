@@ -95,7 +95,8 @@ class ScreenManager():
         hour_plus_8 = self.time_manager.get_time_with_delta(8)
         
         # Must be fetched first, or the pico will not have enough ram for the request to the api.
-        tomorrow_12h_temp, tomorrow_12h_icon = self.data_fetcher.get_weather_data(day_delta=1, spesific_time=12)
+        tomorrow_target = self.time_manager.get_utc_for_local(day_delta=1, local_hour=12) # Tomorrow at 12:00 local time, as UTC.
+        tomorrow_12h_temp, tomorrow_12h_icon = self.data_fetcher.get_weather_data(target=tomorrow_target)
         
         current_temp, current_icon = self.data_fetcher.get_weather_data()  # Get current temperature outside.
         plus_4h_temp, plus_4h_icon = self.data_fetcher.get_weather_data(time_delta=4)  # Get current temperature outside.

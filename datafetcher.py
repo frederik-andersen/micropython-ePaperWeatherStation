@@ -238,40 +238,24 @@ class DataFetcher():
             return data
         
         
-    def get_weather_data(self, time_delta=0, day_delta=0, spesific_time=None):
+    def get_weather_data(self, time_delta=0, target=None):
         """
         Retrieves the temperature and associated weather icon.
 
         Parameters:
-        time_delta (int): The number of hours to add to the current time to get the requested hour.
-        day_delta (int): The number of days to add to the current day to get the requested day.
-        specific_time (int): The hour requested. Used if day_delta is specified.
+        time_delta (int): The number of hours to add to the current hour (UTC) to get the requested hour.
+        target (tuple): Optional (month, day, hour) in UTC. Used for a specific time, for example tomorrow at 12:00 local time.
+                        TimeManager.get_utc_for_local gives this tuple.
         
         Returns:
         tuple:
             int: The temperature.
-            bytes: The weather icon as binary data.
+            bytes: The weather icon as binary data. None if the icon api was unavailable.
         """
-        clock = RTC()
-        current_time = clock.datetime()
-        
-        if day_delta == 0: # If no day delta is specified.
-            requested_hour = current_time[4] + time_delta
-            
+        if target is None:
+            requested_hour = RTC().datetime()[4] + time_delta # UTC hour
             if requested_hour >= 24:
                 requested_hour -= 24
-            
-        else: # If wanted current day + x days and spesific time.
-            # RTC order is (year, month, day, weekday, hour, minute, second, subsecond). mktime needs (year, month, day, hour, minute, second, weekday, yearday).
-            current_time_tuple = (current_time[0], current_time[1], current_time[2], current_time[4], current_time[5], current_time[6], 0, 0)
-            current_time_seconds = utime.mktime(current_time_tuple) # Convert to seconds since epoch
-            next_time_seconds = current_time_seconds + (day_delta * 86400) # Add one day (86400 seconds)
-            next_datetime = utime.localtime(next_time_seconds) # Convert back to datetime
-            
-            next_date = next_datetime[:3] # Extract the date part (year, month, day)
-            
-            requested_hour = spesific_time # The hour as int
-            requested_date = (next_date[1], next_date[2]) # (month, day)
         
         weather_data = self._read_file(self.location) # Read the weather data.
         temperature = None
@@ -279,24 +263,21 @@ class DataFetcher():
         
         for data in weather_data['properties']['timeseries']: # Loop trough the data and find correct time.
             time_and_date = data['time'].split("T")
-            time = time_and_date[1].split(":") # hour, minute, second
+            hour = int(time_and_date[1].split(":")[0]) # UTC hour
             
-            if day_delta == 0:
-                if requested_hour == int(time[0]): # If both hours match.
+            if target is None:
+                if requested_hour == hour: # If both hours match.
                     temperature = data['data']['instant']['details']['air_temperature'] # Get the current temperature.
-                    # weather_icon = self._get_weather_icon(data['data']['next_1_hours']['summary']['symbol_code']) # Get the current weather icon from api.
                     weather_icon = self.get_image(f"{data['data']['next_1_hours']['summary']['symbol_code']}_80x80") # Get 80x80 icon from flash.
                     break
                 
-            else: # If there is a day delta
+            else: # A specific date and hour.
                 date_list = time_and_date[0].split("-") # Split the date
-                month = int(date_list[1]) # Get month
-                day = int(date_list[2]) # Get day
+                month = int(date_list[1])
+                day = int(date_list[2])
                 
-                #print(f"Requested day: {requested_date[1]}, Requested month: {requested_date[0]}, Requested time{}")
-                
-                if requested_date[0] == month and requested_date[1] == day and requested_hour == int(time[0]): # If month, day and hour match
-                    temperature = data['data']['instant']['details']['air_temperature'] # Get the current temperature.
+                if target == (month, day, hour): # If month, day and hour match
+                    temperature = data['data']['instant']['details']['air_temperature'] # Get the temperature.
                     try:
                         weather_icon = self._get_weather_icon(data['data']['next_1_hours']['summary']['symbol_code']) # Get the 200x200 weather icon from api.
                     except Exception as e: # The screen is drawn without the icon if the api is down.

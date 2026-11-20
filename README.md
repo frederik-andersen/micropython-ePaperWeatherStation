@@ -93,7 +93,7 @@ The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworl
    - Connect your Raspberry Pi Pico W to a power source. `main.py` starts by itself.
 
 2. **View Weather Data**:
-   - The ePaper display shows the weather for your location: now, +4 hours, +8 hours and tomorrow at 12:00 UTC. The hour labels use local time.
+   - The ePaper display shows the weather for your location: now, +4 hours, +8 hours and tomorrow at 12:00 local time.
    - The screen is redrawn every whole hour. The weather data is fetched again when the MET API says it has expired, plus a random delay of up to 60 minutes.
    - The screen is cleared once every 24 hours at 02:00 UTC to prevent ghosting.
    - The clock is synced with NTP at start and then every 24 hours.
