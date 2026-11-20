@@ -41,6 +41,7 @@ The wallmount can be downloaded here: [**fran on MakerWorld**](https://makerworl
 2. **Set up your own settings**:  
 Copy user_input_example.py to user_input.py and fill in Wi-Fi name, password, email (required by MET API) and location. user_input.py is in .gitignore, so your password is never committed. Upload user_input.py to the Pico.
 3. **Add your location**:  
+   - To keep your home location private, set LATITUDE, LONGITUDE and ALTITUDE in user_input.py. Then skip the rest of this step.
    - Default location is "drammen".
    - Go get the latitude, longitude and altitude for the place you want weather data.
    - Add your location to the locations dictionary in DataFetcher.

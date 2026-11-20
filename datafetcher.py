@@ -35,6 +35,8 @@ class DataFetcher():
         self.locations = {'drammen': {'latitude': 59.7396, 'longitude': 10.2046, 'altitude': 3},
                           'oslo': {'latitude': 59.9108, 'longitude': 10.7577, 'altitude': 4}
                           }
+        if hasattr(user_input, 'LATITUDE'): # Your own coordinates stay in user_input.py, not in git.
+            self.locations[location.lower()] = {'latitude': user_input.LATITUDE, 'longitude': user_input.LONGITUDE, 'altitude': user_input.ALTITUDE}
         self._is_wifi_enabled()
         
     def _is_wifi_enabled(self):
