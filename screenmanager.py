@@ -47,14 +47,16 @@ class ScreenManager():
         then refreshes and puts the screen to sleep to prevent damage.
         """
         ew = self._init_screen()
-        ew.device.fill(ew.device.White) # White background.
-        
-        self._draw_weather_data(ew)
-        self._draw_date(ew)
-        self._draw_lines(ew)
-        
-        ew.refresh()
-        ew.sleep()  # ALWAYS run this after writing to the screen, may cause physical damage to screen if not.
+        try:
+            ew.device.fill(ew.device.White) # White background.
+            
+            self._draw_weather_data(ew)
+            self._draw_date(ew)
+            self._draw_lines(ew)
+            
+            ew.refresh()
+        finally:
+            ew.sleep()  # ALWAYS run this after writing to the screen, even after an error. May cause physical damage to screen if not.
         
         # Next draw should be in 1 hour. Set that the screen just have been updated.
         self.time_manager.set_screen_updated()
@@ -93,7 +95,8 @@ class ScreenManager():
         hour_plus_8 = self.time_manager.get_time_with_delta(8)
         
         # Must be fetched first, or the pico will not have enough ram for the request to the api.
-        tomorrow_12h_temp, tomorrow_12h_icon = self.data_fetcher.get_weather_data(day_delta=1, spesific_time=12)
+        tomorrow_target = self.time_manager.get_utc_for_local(day_delta=1, local_hour=12) # Tomorrow at 12:00 local time, as UTC.
+        tomorrow_12h_temp, tomorrow_12h_icon = self.data_fetcher.get_weather_data(target=tomorrow_target)
         
         current_temp, current_icon = self.data_fetcher.get_weather_data()  # Get current temperature outside.
         plus_4h_temp, plus_4h_icon = self.data_fetcher.get_weather_data(time_delta=4)  # Get current temperature outside.
@@ -118,7 +121,8 @@ class ScreenManager():
         ew.add_text_vertical_center(f"{plus_8h_temp}°", width_pos=200, height_start_pos=277, height_end_pos=374)
         
         # Tomorrow at 12:00
-        ew.add_image_horizontal_center(image=tomorrow_12h_icon, img_width=200, img_height=200, height_pos=50, width_start_pos=300, width_end_pos=600)
+        if tomorrow_12h_icon is not None: # None if the icon api was unavailable.
+            ew.add_image_horizontal_center(image=tomorrow_12h_icon, img_width=200, img_height=200, height_pos=50, width_start_pos=300, width_end_pos=600)
         ew.add_text_horizontal_center(f"{tomorrow_12h_temp}°", height_pos=260, width_start_pos=300, width_end_pos=600)
         ew.add_text_horizontal_center("i morgen", height_pos=300, width_start_pos=300, width_end_pos=600)
 
